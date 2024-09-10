@@ -1,7 +1,7 @@
 import Lottie
 
 @objc(LottieSplashScreen) class LottieSplashScreen: CDVPlugin {
-    var animationView: LottieAnimationView?
+    var animationView: AnimationView?
     var animationViewContainer: UIView?
     var visible = false
     var animationEnded = false
@@ -120,9 +120,9 @@ import Lottie
 
         let backgroundColor = getUIModeDependentPreference(basePreferenceName: "LottieBackgroundColor", defaultValue: "#ffffff")
 
-       // animationViewContainer?.autoresizingMask = [
-       //     .flexibleWidth, .flexibleHeight, .flexibleTopMargin, .flexibleLeftMargin, .flexibleBottomMargin, .flexibleRightMargin
-       // ]
+        // animationViewContainer?.autoresizingMask = [
+        //     .flexibleWidth, .flexibleHeight, .flexibleTopMargin, .flexibleLeftMargin, .flexibleBottomMargin, .flexibleRightMargin
+        // ]
         animationViewContainer?.backgroundColor = UIColor(hex: backgroundColor)
     }
 
@@ -137,17 +137,17 @@ import Lottie
         if isRemote(remote: remote) {
             let cacheDisabled = (commandDelegate?.settings["LottieCacheDisabled".lowercased()] as? NSString ?? "false").boolValue
             guard let url = URL(string: animationLocation) else { throw LottieSplashScreenError.invalidURL }
-            animationView = LottieAnimationView(url: url, closure: { error in
+            animationView = AnimationView(url: url, closure: { error in
                 if error == nil {
                     self.playAnimation()
                 } else {
                     self.destroyView()
                     self.processInvalidURLError(error: error!)
                 }
-            }, animationCache: cacheDisabled ? nil : DefaultAnimationCache.sharedCache)
+            }, animationCache: cacheDisabled ? nil : LRUAnimationCache.sharedCache)
         } else {
             animationLocation = Bundle.main.bundleURL.appendingPathComponent(animationLocation).path
-            animationView = LottieAnimationView(filePath: animationLocation)
+            animationView = AnimationView(filePath: animationLocation)
         }
 
         calculateAnimationSize(width: width, height: height)
@@ -260,21 +260,21 @@ import Lottie
             object: nil
         )
 
-       // NotificationCenter.default.addObserver(
-       //      self,
-      //      selector: #selector(deviceOrientationChanged),
-      //      name: UIDevice.orientationDidChangeNotification,
-      //      object: nil
-      //  )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(deviceOrientationChanged),
+            name: UIDevice.orientationDidChangeNotification,
+            object: nil
+        )
     }
 
     private func getUIModeDependentPreference(basePreferenceName: String, defaultValue: String = "") -> String {
         var preferenceValue = ""
         if #available(iOS 12.0, *) {
             if viewController.traitCollection.userInterfaceStyle == .dark {
-                preferenceValue = commandDelegate?.settings[(basePreferenceName + "Dark").lowercased()] as? String ?? ""
+                preferenceValue = commandDelegate?.settings[(basePreferenceName + "Dark").lowercased()] as? String ?? defaultValue
             } else {
-                preferenceValue = commandDelegate?.settings[(basePreferenceName + "Light").lowercased()] as? String ?? ""
+                preferenceValue = commandDelegate?.settings[(basePreferenceName + "Light").lowercased()] as? String ?? defaultValue
             }
         }
 
@@ -284,9 +284,9 @@ import Lottie
         return preferenceValue
     }
 
-   // @objc private func deviceOrientationChanged() {
-   //     animationView?.center = CGPoint(x: UIScreen.main.bounds.midX, y: UIScreen.main.bounds.midY)
-   // }
+    @objc private func deviceOrientationChanged() {
+        animationView?.center = CGPoint(x: UIScreen.main.bounds.midX, y: UIScreen.main.bounds.midY)
+    }
 }
 
 enum LottieSplashScreenError: Error {

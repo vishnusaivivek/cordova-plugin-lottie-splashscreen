@@ -7,13 +7,13 @@ var LottieSplashScreen = (function () {
     LottieSplashScreen.hide = function () {
         this.animationEnded = true;
         return new Promise(function (resolve, reject) {
-            cordova_1.exec(resolve, reject, 'LottieSplashScreen', 'hide', []);
+            (0, cordova_1.exec)(resolve, reject, 'LottieSplashScreen', 'hide', []);
         });
     };
     LottieSplashScreen.show = function (location, remote, width, height) {
         this.animationEnded = false;
         return new Promise(function (resolve, reject) {
-            cordova_1.exec(resolve, reject, 'LottieSplashScreen', 'show', [location, remote, width, height]);
+            (0, cordova_1.exec)(resolve, reject, 'LottieSplashScreen', 'show', [location, remote, width, height]);
         });
     };
     LottieSplashScreen.on = function (event, callback) {
@@ -28,7 +28,7 @@ var LottieSplashScreen = (function () {
         }
     };
     LottieSplashScreen.once = function (event) {
-        return new Promise(function (resolve, _) {
+        return new Promise(function (resolve) {
             document.addEventListener(event, resolve);
         });
     };
@@ -38,7 +38,7 @@ LottieSplashScreen.on('lottieAnimationStart', function () { return (LottieSplash
 LottieSplashScreen.on('lottieAnimationCancel', function () { return (LottieSplashScreen.animationEnded = true); });
 LottieSplashScreen.on('lottieAnimationEnd', function () { return (LottieSplashScreen.animationEnded = true); });
 document.addEventListener('deviceready', function () {
-    cordova_1.exec(function (data) {
+    (0, cordova_1.exec)(function (data) {
         var payload = Boolean(data);
         if (!LottieSplashScreen.animationEnded && payload) {
             document.dispatchEvent(new Event('lottieAnimationEnd'));
