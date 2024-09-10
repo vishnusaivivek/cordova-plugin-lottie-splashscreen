@@ -260,21 +260,21 @@ import Lottie
             object: nil
         )
 
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(deviceOrientationChanged),
-            name: UIDevice.orientationDidChangeNotification,
-            object: nil
-        )
+       // NotificationCenter.default.addObserver(
+       //      self,
+      //      selector: #selector(deviceOrientationChanged),
+      //      name: UIDevice.orientationDidChangeNotification,
+      //      object: nil
+      //  )
     }
 
     private func getUIModeDependentPreference(basePreferenceName: String, defaultValue: String = "") -> String {
         var preferenceValue = ""
         if #available(iOS 12.0, *) {
             if viewController.traitCollection.userInterfaceStyle == .dark {
-                preferenceValue = commandDelegate?.settings[(basePreferenceName + "Dark").lowercased()] as? String ?? defaultValue
+                preferenceValue = commandDelegate?.settings[(basePreferenceName + "Dark").lowercased()] as? String ?? ""
             } else {
-                preferenceValue = commandDelegate?.settings[(basePreferenceName + "Light").lowercased()] as? String ?? defaultValue
+                preferenceValue = commandDelegate?.settings[(basePreferenceName + "Light").lowercased()] as? String ?? ""
             }
         }
 
@@ -284,9 +284,9 @@ import Lottie
         return preferenceValue
     }
 
-    @objc private func deviceOrientationChanged() {
-        animationView?.center = CGPoint(x: UIScreen.main.bounds.midX, y: UIScreen.main.bounds.midY)
-    }
+   // @objc private func deviceOrientationChanged() {
+   //     animationView?.center = CGPoint(x: UIScreen.main.bounds.midX, y: UIScreen.main.bounds.midY)
+   // }
 }
 
 enum LottieSplashScreenError: Error {
